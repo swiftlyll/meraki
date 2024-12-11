@@ -6,6 +6,7 @@ import meraki
 import json
 import csv
 import os
+from datetime import datetime
 
 # client
 api_key = os.environ["MERAKI_API_KEY"]
@@ -84,11 +85,14 @@ for network_info, network in networks.items(): # access network info for each ne
             'Static Range Description': static_range_comment
         })
 
-print("Generating CSV file")        
-with open('test.csv', mode='w', newline='') as csv_file:
+print("Generating CSV file") 
+date = datetime.now().strftime('%Y%m%d')
+file_name = f'meraki_vlans_{date}.csv'
+working_directory = os.getcwd()
+with open(file=file_name, mode='w', newline='') as csv_file:
     writer = csv.DictWriter(csv_file,all_vlans[0].keys())
     writer.writeheader()   
     writer.writerows(all_vlans)
-print("Successfully generated CSV file")
+print(f"Successfully generated {file_name} in directory {working_directory}")
 
 input("Press 'Enter' to exit")
