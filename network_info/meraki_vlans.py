@@ -90,3 +90,5 @@ with open('test.csv', mode='w', newline='') as csv_file:
     writer.writeheader()   
     writer.writerows(all_vlans)
 print("Successfully generated CSV file")
+
+input("Press 'Enter' to exit")
