@@ -1,0 +1,1 @@
+# Place holder, eventually will get pull a switch's ports with port information and devices connected to said ports. Limit to only one switch.
