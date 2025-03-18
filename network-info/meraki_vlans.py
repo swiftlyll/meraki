@@ -39,32 +39,36 @@ all_vlans = []
 
 for each_network, network in networks.items(): # access network info for each network entry directly, instead of having to manually specify 'network["Network A"]'
     print(f'Gathering data for VLANs configured in network {network["Name"]}')
-    vlans = dashboard.appliance.getNetworkApplianceVlans(network['Id'])
-    # vlans_pretty = json.dumps(vlans, indent=4)
-    # print(vlans_pretty)
+    try:
+        vlans = dashboard.appliance.getNetworkApplianceVlans(network['Id'])
+        # vlans_pretty = json.dumps(vlans, indent=4)
+        # print(vlans_pretty)
     
-    for vlan in vlans:
-        static_range = vlan.get('reservedIpRanges','N/A')
-        static_range_start, static_range_end, static_range_comment = 'N/A', 'N/A', 'N/A'
-        
-        # below "if" checks if the list is not empty, this prevents the error "IndexError: list index out of range" when using [0]
-        if static_range:
-            static_range_start = static_range[0].get('start','N/A')
-            static_range_end = static_range[0].get('end','N/A')
-            static_range_comment = static_range[0].get('comment','N/A')
+        for vlan in vlans:
+            static_range = vlan.get('reservedIpRanges','N/A')
+            static_range_start, static_range_end, static_range_comment = 'N/A', 'N/A', 'N/A'
+            
+            # below "if" checks if the list is not empty, this prevents the error "IndexError: list index out of range" when using [0]
+            if static_range:
+                static_range_start = static_range[0].get('start','N/A')
+                static_range_end = static_range[0].get('end','N/A')
+                static_range_comment = static_range[0].get('comment','N/A')
 
-        all_vlans.append({
-            'Network': network.get('Name'), 
-            'VLAN ID': vlan.get('id'), 
-            'VLAN Name': vlan.get('name'), 
-            'Subnet': vlan.get('subnet'), 
-            'Interface IP': vlan.get('applianceIp'),
-            'DHCP Handling': vlan.get('dhcpHandling'),
-            'DHCP Lease Time': vlan.get('dhcpLeaseTime','N/A'),
-            'Static Range Start': static_range_start,
-            'Static Range End': static_range_end,
-            'Static Range Description': static_range_comment
-        })
+            all_vlans.append({
+                'Network': network.get('Name'), 
+                'VLAN ID': vlan.get('id'), 
+                'VLAN Name': vlan.get('name'), 
+                'Subnet': vlan.get('subnet'), 
+                'Interface IP': vlan.get('applianceIp'),
+                'DHCP Handling': vlan.get('dhcpHandling'),
+                'DHCP Lease Time': vlan.get('dhcpLeaseTime','N/A'),
+                'Static Range Start': static_range_start,
+                'Static Range End': static_range_end,
+                'Static Range Description': static_range_comment
+            })
+    except Exception as e:
+        print(f"Exeption occurred: {e}")
+        continue
 
 print("Generating CSV file") 
 date = datetime.now().strftime('%Y%m%d')
